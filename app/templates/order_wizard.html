@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}New Digitization Order — ReelToDigit{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+    <!-- Wizard Header -->
+    <div class="mb-8 text-center">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
+            <span>Step 1 of 3</span>
+        </div>
+        <h1 class="text-3xl font-extrabold text-white">Select Cassette Count</h1>
+        <p class="text-sm text-slate-400 mt-1">Choose how many cassette tapes you wish to digitize in this order batch.</p>
+    </div>
+
+
+    {% if error %}
+        <div class="mb-6 p-4 rounded-2xl bg-rose-950/60 border border-rose-500/40 text-rose-200 flex items-center space-x-3">
+            <i class="fa-solid fa-circle-exclamation text-2xl text-rose-400"></i>
+            <div class="text-sm font-semibold">{{ error }}</div>
+        </div>
+    {% endif %}
+
+    {% if not has_address %}
+        <div class="mb-6 p-4 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-triangle-exclamation text-2xl text-amber-400"></i>
+                <div class="text-sm">
+                    <div class="font-bold">Shipping Address Required</div>
+                    <div>Please add your shipping address so we can generate your prepaid mailer label.</div>
+                </div>
+            </div>
+            <a href="/profile" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-colors">
+                Add Address
+            </a>
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
+        <div class="md:col-span-3 glass-card p-8 rounded-3xl border border-slate-800 shadow-2xl">
+            <form action="/orders/new" method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-200 mb-3 flex items-center justify-between">
+                        <span>Quantity of Cassettes</span>
+                        <span class="text-indigo-400 font-bold text-lg" id="selected_count_badge">5 tapes</span>
+                    </label>
+                    <input type="number" id="cassette_count" name="cassette_count" min="1" max="{{ pricing.max_cassettes }}" value="5" required class="w-full px-4 py-3.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-lg focus:outline-none focus:border-indigo-500 transition-colors">
+                    <p class="text-xs text-slate-500 mt-2">Maximum {{ pricing.max_cassettes }} tapes per order batch. Need more? Contact lab support.</p>
+                </div>
+
+                <div class="pt-2">
+                    <label class="block text-sm font-semibold text-slate-200 mb-3">Output Digital Format</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="format" value="MP3" class="peer sr-only" checked>
+                            <div class="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 hover:bg-slate-800 peer-checked:border-indigo-500 peer-checked:bg-indigo-950/40 peer-checked:text-indigo-300 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <div class="font-bold text-white text-sm"><i class="fa-solid fa-music mr-2 text-indigo-400"></i>MP3 Audio</div>
+                                    <i class="fa-solid fa-circle-check text-indigo-500 opacity-0 peer-checked:opacity-100"></i>
+                                </div>
+                                <div class="text-xs text-slate-400 mt-1">Standard high quality 256kbps audio</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="format" value="MP4" class="peer sr-only">
+                            <div class="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 hover:bg-slate-800 peer-checked:border-emerald-500 peer-checked:bg-emerald-950/40 peer-checked:text-emerald-300 transition-colors">
+                                <div class="flex items-center justify-between">
+                                    <div class="font-bold text-white text-sm"><i class="fa-solid fa-video mr-2 text-emerald-400"></i>MP4 Video</div>
+                                    <i class="fa-solid fa-circle-check text-emerald-500 opacity-0 peer-checked:opacity-100"></i>
+                                </div>
+                                <div class="text-xs text-slate-400 mt-1">For video cassettes/VHS digitizing</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Hidden field for T&C acceptance -->
+                <input type="hidden" id="accept_terms" name="accept_terms" value="">
+
+                <!-- T&C Link + Status -->
+                <div class="mt-2 p-4 rounded-2xl bg-amber-950/30 border border-amber-500/20 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-file-contract text-amber-400 text-lg"></i>
+                        <div>
+                            <div class="text-sm font-bold text-amber-200">Terms & Conditions</div>
+                            <div class="text-xs text-slate-400" id="terms_status">You must accept the terms to continue.</div>
+                        </div>
+                    </div>
+                    <button type="button" id="open_terms_btn" class="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 font-semibold rounded-xl text-xs transition-colors flex items-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>Read Terms</span>
+                    </button>
+                </div>
+
+                <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                    <a href="/orders" class="text-sm font-semibold text-slate-400 hover:text-white">Cancel</a>
+                    <button type="submit" id="submit_btn" disabled class="px-8 py-3.5 rounded-xl btn-gradient text-white font-bold text-base shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Continue to Cassette Tagging <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Live Price Preview Card -->
+        <div class="md:col-span-2 glass-card p-6 rounded-3xl border border-slate-800/80 shadow-xl space-y-4">
+            <h3 class="font-bold text-white text-base flex items-center space-x-2 border-b border-slate-800 pb-3">
+                <i class="fa-solid fa-receipt text-indigo-400"></i>
+                <span>Price Summary</span>
+            </h3>
+
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-slate-400"><span id="summary_count">5</span> Tapes (${{ "%.2f"|format(pricing.unit_price) }}/ea)</span>
+                    <span class="text-slate-200 font-semibold" id="summary_subtotal">$75.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Shipping (Flat Rate)</span>
+                    <span class="text-slate-200 font-semibold" id="summary_shipping">${{ "%.2f"|format(pricing.shipping_flat) }}</span>
+                </div>
+                <div class="border-t border-slate-800 pt-3 flex justify-between font-bold text-base">
+                    <span class="text-white">Total</span>
+                    <span class="text-indigo-400 text-lg" id="summary_total">$83.99</span>
+                </div>
+            </div>
+
+            <div class="bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-3 text-xs text-indigo-300">
+                <i class="fa-solid fa-shield-check mr-1"></i> Includes India Post tracking & lab digitization guarantee.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- T&C Modal Popup -->
+<div id="terms_modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);">
+    <div class="w-full max-w-lg rounded-3xl border border-slate-700 shadow-2xl overflow-hidden" style="background: linear-gradient(145deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98));">
+        <!-- Modal Header -->
+        <div class="px-6 pt-6 pb-4 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
+                    <i class="fa-solid fa-file-contract text-amber-400 text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-white">Terms & Conditions</h3>
+                    <p class="text-xs text-slate-400">Please read carefully before proceeding</p>
+                </div>
+            </div>
+            <button type="button" id="close_terms_btn" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-5 space-y-4">
+            <div class="space-y-3">
+                <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">1</div>
+                    <div>
+                        <div class="text-sm font-bold text-white mb-1">Cassette Quality Requirement</div>
+                        <div class="text-xs text-slate-300 leading-relaxed">Customer must send <strong class="text-amber-200">good quality cassettes</strong> only. Damaged or broken cassettes are <strong class="text-amber-200">not acceptable</strong> and may be returned without processing.</div>
+                    </div>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">2</div>
+                    <div>
+                        <div class="text-sm font-bold text-white mb-1">Transit Damage Disclaimer</div>
+                        <div class="text-xs text-slate-300 leading-relaxed">If any damage occurs to cassettes <strong class="text-amber-200">during transit</strong>, the company is <strong class="text-amber-200">not responsible</strong>. We recommend using secure packaging when shipping your tapes.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accept Checkbox inside modal -->
+            <label class="flex items-start space-x-3 cursor-pointer group p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20 hover:border-indigo-500/40 transition-colors">
+                <input type="checkbox" id="modal_accept_cb" class="mt-0.5 w-5 h-5 rounded border-2 border-amber-500/50 bg-slate-900 text-amber-500 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer accent-amber-500">
+                <span class="text-xs text-slate-200 font-semibold group-hover:text-white transition-colors leading-relaxed">
+                    I have read and accept the above terms. I understand that damaged cassettes will not be processed and the company is not liable for transit damage.
+                </span>
+            </label>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 pb-6 pt-2 flex items-center justify-end space-x-3">
+            <button type="button" id="cancel_terms_btn" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold transition-colors">
+                Cancel
+            </button>
+            <button type="button" id="confirm_terms_btn" disabled class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold shadow-lg shadow-amber-500/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-check mr-1"></i> I Accept
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('cassette_count');
+        const badge = document.getElementById('selected_count_badge');
+        const submitBtn = document.getElementById('submit_btn');
+        const acceptField = document.getElementById('accept_terms');
+        const termsStatus = document.getElementById('terms_status');
+        const hasAddress = {{ 'true' if has_address else 'false' }};
+
+        // Modal elements
+        const modal = document.getElementById('terms_modal');
+        const openBtn = document.getElementById('open_terms_btn');
+        const closeBtn = document.getElementById('close_terms_btn');
+        const cancelBtn = document.getElementById('cancel_terms_btn');
+        const confirmBtn = document.getElementById('confirm_terms_btn');
+        const modalCb = document.getElementById('modal_accept_cb');
+
+        let termsAccepted = false;
+
+        // Tape count badge
+        if (input && badge) {
+            input.addEventListener('input', () => {
+                badge.textContent = `${input.value} tape${input.value > 1 ? 's' : ''}`;
+            });
+        }
+
+        function updateSubmitState() {
+            if (submitBtn) {
+                submitBtn.disabled = !(termsAccepted && hasAddress);
+            }
+        }
+
+        // Open modal
+        openBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modalCb.checked = termsAccepted;
+            confirmBtn.disabled = !modalCb.checked;
+        });
+
+        // Close modal helpers
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Checkbox toggles confirm button
+        modalCb.addEventListener('change', () => {
+            confirmBtn.disabled = !modalCb.checked;
+        });
+
+        // Confirm acceptance
+        confirmBtn.addEventListener('click', () => {
+            termsAccepted = true;
+            acceptField.value = 'on';
+            termsStatus.innerHTML = '<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Terms accepted</span>';
+            openBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i><span>Accepted</span>';
+            openBtn.classList.remove('bg-amber-500/20', 'hover:bg-amber-500/30', 'border-amber-500/40', 'text-amber-200');
+            openBtn.classList.add('bg-emerald-500/20', 'hover:bg-emerald-500/30', 'border-emerald-500/40', 'text-emerald-300');
+            updateSubmitState();
+            closeModal();
+        });
+
+        updateSubmitState();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Editable Profile & Shipping Address — ReelToDigit{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+    <div class="glass-card p-8 rounded-3xl border border-slate-800 shadow-2xl">
+        <div class="flex items-center space-x-4 mb-8 pb-6 border-b border-slate-800">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-2xl">
+                <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-white">Account & Shipping Profile</h2>
+                <p class="text-xs text-slate-400">Keep your shipping address updated for printable return labels and physical cassette returns.</p>
+            </div>
+        </div>
+
+        <form action="/profile" method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Full Name</label>
+                    <input type="text" name="full_name" required value="{{ user.full_name }}" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Address (Read-only)</label>
+                    <input type="email" value="{{ user.email }}" disabled class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 cursor-not-allowed">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Phone Number</label>
+                    <input type="tel" name="phone" value="{{ user.phone or '' }}" placeholder="(555) 012-3456" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Account Role</label>
+                    <div class="px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-indigo-400 font-semibold text-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span class="capitalize">{{ user.role }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-800/80">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-truck-ramp-box text-indigo-400"></i>
+                    <span>Default Shipping Address</span>
+                </h3>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Street Address</label>
+                        <input type="text" name="street_address" required value="{{ user.street_address or '' }}" placeholder="742 Evergreen Terrace" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">City</label>
+                            <input type="text" name="city" required value="{{ user.city or '' }}" placeholder="Springfield" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">State / Province</label>
+                            <input type="text" name="state" required value="{{ user.state or '' }}" placeholder="IL" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Postal Code</label>
+                            <input type="text" name="postal_code" required value="{{ user.postal_code or '' }}" placeholder="62701" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Country</label>
+                        <input type="text" name="country" required value="{{ user.country or 'USA' }}" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+                <a href="/orders/new" class="text-sm font-semibold text-indigo-400 hover:text-indigo-300">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Back to Order Wizard
+                </a>
+                <button type="submit" class="px-8 py-3.5 rounded-xl btn-gradient text-white font-bold text-base shadow-lg shadow-indigo-500/25">
+                    Save Profile Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

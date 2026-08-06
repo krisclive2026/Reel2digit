@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ReelToDigit — Cassette Digitization Portal{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 flex flex-col min-h-screen">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 glass-nav border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-rose-500 flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-tape text-xl"></i>
+                </div>
+                <span class="font-bold text-xl tracking-tight text-white group-hover:text-indigo-300 transition-colors">ReelTo<span class="text-indigo-400">Digit</span></span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="/" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Home</a>
+                <a href="/orders/new" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">New Order</a>
+                {% if user %}
+                    <a href="/orders" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">My Orders</a>
+                    {% if user.role == 'admin' %}
+                        <a href="/admin" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 transition-all">
+                            <i class="fa-solid fa-user-shield mr-1"></i> Admin Portal
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                {% if user %}
+                    <div class="relative">
+                        <button id="profileDropdownBtn" class="flex items-center space-x-2 text-sm font-medium text-slate-200 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 transition-all focus:outline-none">
+                            <i class="fa-solid fa-circle-user text-indigo-400 text-base"></i>
+                            <span>{{ user.full_name.split()[0] }}</span>
+                            <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                        </button>
+                        <div id="profileDropdownMenu" class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-2 hidden transition-all z-50">
+                            <a href="/profile" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fa-solid fa-id-card mr-2 text-indigo-400"></i> Edit Profile</a>
+                            <a href="/orders" class="block px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white"><i class="fa-solid fa-box mr-2 text-indigo-400"></i> My Orders</a>
+                            <div class="border-t border-slate-800 my-1"></div>
+                            <a href="/logout" class="block px-4 py-2 text-sm text-rose-400 hover:bg-rose-950/40"><i class="fa-solid fa-right-from-bracket mr-2"></i> Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="/login" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-1.5">Log in</a>
+                    <a href="/register" class="text-sm font-medium btn-gradient text-white px-4 py-2 rounded-lg shadow-md hover:shadow-indigo-500/20">Sign up</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Alert Messages -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        {% if request.query_params.get('message') or message %}
+            <div class="mb-4 p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-emerald-300 flex items-center justify-between shadow-lg">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-check text-xl text-emerald-400"></i>
+                    <span>{{ request.query_params.get('message') or message }}</span>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if request.query_params.get('error') or error %}
+            <div class="mb-4 p-4 rounded-xl bg-rose-950/60 border border-rose-500/30 text-rose-300 flex items-center justify-between shadow-lg">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-exclamation text-xl text-rose-400"></i>
+                    <span>{{ request.query_params.get('error') or error }}</span>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950/80 py-8 mt-12 text-sm text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-white text-xs">
+                    <i class="fa-solid fa-tape"></i>
+                </div>
+                <span class="font-semibold text-slate-200">ReelToDigit</span>
+                <span>&copy; 2026. Preserving precious memory audio tapes.</span>
+            </div>
+            <div class="flex items-center space-x-6 text-xs">
+                <span>FastAPI + Python Stack</span>
+                <span>•</span>
+                <span>India Post Shipping Integration</span>
+                <span>•</span>
+                <span>256-bit MP3/MP4 Digitization</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main JS -->
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
