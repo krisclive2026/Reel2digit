@@ -50,9 +50,9 @@ async function updatePricing() {
             const totalEl = document.getElementById('summary_total');
 
             if (countEl) countEl.textContent = data.count;
-            if (subtotalEl) subtotalEl.textContent = `$${data.subtotal.toFixed(2)}`;
-            if (shippingEl) shippingEl.textContent = `$${data.shipping.toFixed(2)}`;
-            if (totalEl) totalEl.textContent = `$${data.total.toFixed(2)}`;
+            if (subtotalEl) subtotalEl.textContent = `₹${data.subtotal.toFixed(2)}`;
+            if (shippingEl) shippingEl.textContent = `₹${data.shipping.toFixed(2)}`;
+            if (totalEl) totalEl.textContent = `₹${data.total.toFixed(2)}`;
         }
     } catch (err) {
         console.error('Pricing calculation error:', err);
