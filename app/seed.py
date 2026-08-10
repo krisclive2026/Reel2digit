@@ -11,7 +11,7 @@ def seed_db():
         if not config:
             config = PricingConfig(unit_price=15.00, shipping_flat=8.99, max_cassettes=50)
             db.add(config)
-            print("Seeded PricingConfig ($15.00/cassette, $8.99 shipping, max 50).")
+            print("Seeded PricingConfig (₹15.00/cassette, ₹8.99 shipping, max 50).")
 
         # Check Default Admin
         admin = db.query(User).filter(User.email == "admin@reeltodigit.com").first()
