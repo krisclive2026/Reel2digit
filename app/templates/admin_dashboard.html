@@ -65,7 +65,7 @@
                                         <i class="fa-solid {% if ord.format == 'MP4' %}fa-video{% else %}fa-music{% endif %} mr-1"></i>FORMAT: {{ ord.format }}
                                     </div>
                                 </td>
-                                <td class="p-4 font-bold text-emerald-400">${{ "%.2f"|format(ord.total_price) }}</td>
+                                <td class="p-4 font-bold text-emerald-400">₹{{ "%.2f"|format(ord.total_price) }}</td>
                                 <td class="p-4">
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase badge-{{ ord.status }}">
                                         {{ ord.status.replace('_', ' ') }}
@@ -115,12 +115,12 @@
 
             <form action="/admin/pricing" method="POST" class="space-y-4 text-xs">
                 <div>
-                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Unit Price Per Cassette ($)</label>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Unit Price Per Cassette (₹)</label>
                     <input type="number" step="0.01" name="unit_price" value="{{ pricing.unit_price }}" required class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Flat Rate Shipping ($)</label>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Flat Rate Shipping (₹)</label>
                     <input type="number" step="0.01" name="shipping_flat" value="{{ pricing.shipping_flat }}" required class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold">
                 </div>
 
