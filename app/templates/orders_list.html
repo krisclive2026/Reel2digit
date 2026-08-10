@@ -30,7 +30,7 @@
                         <div class="flex flex-wrap gap-4 text-xs text-slate-400">
                             <span><i class="fa-solid fa-tape text-indigo-400 mr-1"></i> {{ order.cassette_count }} Cassette{{ 's' if order.cassette_count > 1 else '' }}</span>
                             <span>•</span>
-                            <span><i class="fa-solid fa-dollar-sign text-emerald-400 mr-1"></i> Total: ${{ "%.2f"|format(order.total_price) }}</span>
+                            <span><i class="fa-solid fa-indian-rupee-sign text-emerald-400 mr-1"></i> Total: ₹{{ "%.2f"|format(order.total_price) }}</span>
                             <span>•</span>
                             <span><i class="fa-solid fa-calendar mr-1"></i> Placed {{ order.created_at.strftime('%b %d, %Y') }}</span>
                         </div>

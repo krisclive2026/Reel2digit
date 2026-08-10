@@ -110,16 +110,16 @@
 
             <div class="space-y-3 text-sm">
                 <div class="flex justify-between">
-                    <span class="text-slate-400"><span id="summary_count">5</span> Tapes (${{ "%.2f"|format(pricing.unit_price) }}/ea)</span>
-                    <span class="text-slate-200 font-semibold" id="summary_subtotal">$75.00</span>
+                    <span class="text-slate-400"><span id="summary_count">5</span> Tapes (₹{{ "%.2f"|format(pricing.unit_price) }}/ea)</span>
+                    <span class="text-slate-200 font-semibold" id="summary_subtotal">₹75.00</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-400">Shipping (Flat Rate)</span>
-                    <span class="text-slate-200 font-semibold" id="summary_shipping">${{ "%.2f"|format(pricing.shipping_flat) }}</span>
+                    <span class="text-slate-200 font-semibold" id="summary_shipping">₹{{ "%.2f"|format(pricing.shipping_flat) }}</span>
                 </div>
                 <div class="border-t border-slate-800 pt-3 flex justify-between font-bold text-base">
                     <span class="text-white">Total</span>
-                    <span class="text-indigo-400 text-lg" id="summary_total">$83.99</span>
+                    <span class="text-indigo-400 text-lg" id="summary_total">₹83.99</span>
                 </div>
             </div>
 

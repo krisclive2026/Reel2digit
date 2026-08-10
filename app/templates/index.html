@@ -32,11 +32,11 @@
 
                 <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-800/80 text-slate-400 text-xs sm:text-sm">
                     <div>
-                        <div class="font-bold text-white text-base sm:text-lg">${{ "%.2f"|format(pricing.unit_price) }}</div>
+                        <div class="font-bold text-white text-base sm:text-lg">₹{{ "%.2f"|format(pricing.unit_price) }}</div>
                         <div>Per cassette tape</div>
                     </div>
                     <div>
-                        <div class="font-bold text-white text-base sm:text-lg">${{ "%.2f"|format(pricing.shipping_flat) }}</div>
+                        <div class="font-bold text-white text-base sm:text-lg">₹{{ "%.2f"|format(pricing.shipping_flat) }}</div>
                         <div>Flat rate shipping</div>
                     </div>
                     <div>
@@ -72,16 +72,16 @@
 
                     <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3">
                         <div class="flex justify-between text-sm">
-                            <span class="text-slate-400"><span id="summary_count">5</span> × Cassette Digitization (${{ "%.2f"|format(pricing.unit_price) }}/ea)</span>
-                            <span class="text-slate-200 font-semibold" id="summary_subtotal">$75.00</span>
+                            <span class="text-slate-400"><span id="summary_count">5</span> × Cassette Digitization (₹{{ "%.2f"|format(pricing.unit_price) }}/ea)</span>
+                            <span class="text-slate-200 font-semibold" id="summary_subtotal">₹75.00</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-slate-400">India Post Insured Shipping (Flat)</span>
-                            <span class="text-slate-200 font-semibold" id="summary_shipping">${{ "%.2f"|format(pricing.shipping_flat) }}</span>
+                            <span class="text-slate-200 font-semibold" id="summary_shipping">₹{{ "%.2f"|format(pricing.shipping_flat) }}</span>
                         </div>
                         <div class="border-t border-slate-800 pt-3 flex justify-between text-base font-bold">
                             <span class="text-white">Estimated Total</span>
-                            <span class="text-indigo-400 text-lg" id="summary_total">$83.99</span>
+                            <span class="text-indigo-400 text-lg" id="summary_total">₹83.99</span>
                         </div>
                     </div>
 

@@ -20,7 +20,7 @@
                     <span class="font-bold text-white">Order Number:</span> {{ order.order_number }}
                 </div>
                 <div class="font-bold text-indigo-400">
-                    Total Amount: ${{ "%.2f"|format(order.total_price) }}
+                    Total Amount: ₹{{ "%.2f"|format(order.total_price) }}
                 </div>
             </div>
 
