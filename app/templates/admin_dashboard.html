@@ -70,6 +70,14 @@
                                     <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase badge-{{ ord.status }}">
                                         {{ ord.status.replace('_', ' ') }}
                                     </span>
+                                    {% if ord.status == 'draft' %}
+                                        <form action="/admin/orders/{{ ord.id }}/confirm-payment" method="POST" class="mt-1" onsubmit="return confirm('Confirm you have verified this UPI payment in your bank/UPI app?');">
+                                            <button type="submit" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-[10px] flex items-center space-x-1">
+                                                <i class="fa-solid fa-check"></i>
+                                                <span>Confirm UPI Payment</span>
+                                            </button>
+                                        </form>
+                                    {% endif %}
                                 </td>
                                 <td class="p-4">
                                     <form action="/admin/orders/{{ ord.id }}/status" method="POST" class="flex items-center space-x-1">
