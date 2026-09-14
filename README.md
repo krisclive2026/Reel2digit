@@ -46,6 +46,12 @@ Open your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ## Operations (Production / Lightsail)
 
+
+open http://13.207.185.49/ (use http , not https)
+
+
+lightsail ip : http://13.207.185.49/ (use http , not https)
+
 These commands assume you're SSH'd into the Lightsail instance, inside `/opt/reeltodigit`, with the Docker Compose stack (`app`, `db`, `minio`, `nginx`) running.
 
 ### Viewing the database (Postgres)
