@@ -338,3 +338,56 @@ bash
 
 
 sudo certbot renew --dry-run
+
+
+
+
+
+Email Notification setup
+
+
+
+
+you'll need to add those before the notification email can actually send. Here's the quick recap:
+
+1. Get a Gmail App Password
+Go to your Google Account → Security → make sure 2-Step Verification is turned on (required)
+Go to https://myaccount.google.com/apppasswords
+Create a new app password, name it "ReelToDigit"
+Copy the 16-character password (shown only once)
+
+
+
+
+3. Add to .env
+bash
+nano ~/reeltodigit/.env
+
+Add these lines:
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=youraccount@gmail.com
+SMTP_PASSWORD=your16charapppassword
+ADMIN_NOTIFY_EMAIL=youraccount@gmail.com
+SMTP_USER — the Gmail address you're sending from
+SMTP_PASSWORD — the 16-character app password (no spaces)
+ADMIN_NOTIFY_EMAIL — where the notification should land (can be the same Gmail address, or a different inbox you check)
+
+
+
+
+
+3. Recreate the app container (env changes need this, not just restart)
+bash
+cd ~/reeltodigit
+docker compose up -d app
+
+
+
+
+5. Verify it picked up the values
+bash
+docker compose exec app env | grep -E "SMTP|ADMIN_NOTIFY"
+
+Once that's set, test again with "I've Paid" on a draft order and check the inbox. Let me know once you've got the app password and I'll help confirm it's wired up correctly.
