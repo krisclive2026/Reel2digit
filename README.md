@@ -147,3 +147,82 @@ docker compose exec app python -m app.seed
 ├── LIGHTSAIL_SETUP.md
 └── README.md
 ```
+
+
+
+
+
+Here's the complete HTTPS setup we worked through, as a clean reference:
+
+1. Get a free domain pointing to your IP
+
+Since you don't have a real domain, use nip.io — no signup needed, it resolves automatically:
+
+13.201.54.185.nip.io
+2. Install certbot
+bash
+sudo apt install certbot -y
+3. Free port 80 temporarily (certbot needs it)
+bash
+cd ~/reeltodigit
+docker compose stop nginx
+4. Get the certificate
+bash
+sudo certbot certonly --standalone -d 13.201.54.185.nip.io
+5. Restart nginx
+bash
+docker compose start nginx
+6. Mount the certs into the nginx container
+
+In docker-compose.yml, under the nginx service's volumes:, add (absolute path, no ./):
+
+yaml
+- /etc/letsencrypt:/etc/letsencrypt:ro
+7. Enable the SSL server block in nginx config
+
+In nginx/nginx.conf, uncomment/add the HTTPS server block:
+
+nginx
+server {
+    listen 443 ssl;
+    server_name 13.201.54.185.nip.io;
+
+    ssl_certificate     /etc/letsencrypt/live/13.201.54.185.nip.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/13.201.54.185.nip.io/privkey.pem;
+
+    client_max_body_size 200M;
+
+    location /static/ {
+        alias /srv/app/app/static/;
+        expires 7d;
+    }
+
+    location / {
+        proxy_pass http://reeltodigit_app;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+⚠️ Make sure any comment lines actually start with # — an unmarked comment line will crash nginx with an unknown directive error.
+
+8. Recreate nginx to pick up both changes
+bash
+docker compose up -d nginx
+9. Validate config
+bash
+docker compose exec nginx nginx -t
+
+Should say "syntax is ok" / "test is successful".
+
+10. Test
+bash
+curl https://13.201.54.185.nip.io/
+Notes for renewal
+
+Let's Encrypt certs expire every 90 days. Set up auto-renewal:
+
+bash
+sudo certbot renew --dry-run
